@@ -12,7 +12,7 @@
   | obtain it through the world-wide-web, please send a note to          |
   | license@php.net so we can mail you a copy immediately.               |
   +----------------------------------------------------------------------+
-  | Author:                                                              |
+  | Author: BYVoid <byvoid.kcp@gmail.com>                                |
   +----------------------------------------------------------------------+
 */
 
@@ -78,13 +78,3 @@ ZEND_END_MODULE_GLOBALS(opencc)
 #endif
 
 #endif	/* PHP_OPENCC_H */
-
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */
