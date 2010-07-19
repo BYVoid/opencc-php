@@ -64,39 +64,27 @@ zend_module_entry opencc_module_entry = {
 ZEND_GET_MODULE(opencc)
 #endif
 
-/* Remove comments and fill if you need to have entries in php.ini
 PHP_INI_BEGIN()
-    STD_PHP_INI_ENTRY("opencc.global_value",      "42", PHP_INI_ALL, OnUpdateLong, global_value, zend_opencc_globals, opencc_globals)
-    STD_PHP_INI_ENTRY("opencc.global_string", "foobar", PHP_INI_ALL, OnUpdateString, global_string, zend_opencc_globals, opencc_globals)
+    //STD_PHP_INI_ENTRY("opencc.global_value",      "42", PHP_INI_ALL, OnUpdateLong, global_value, zend_opencc_globals, opencc_globals)
+    STD_PHP_INI_ENTRY("opencc.default_config", "zhs2zht.ini", PHP_INI_ALL, OnUpdateString, default_config, zend_opencc_globals, opencc_globals)
 PHP_INI_END()
-*/
 
-/* {{{ php_opencc_init_globals
- */
-/* Uncomment this function if you have INI entries
 static void php_opencc_init_globals(zend_opencc_globals *opencc_globals)
 {
-	opencc_globals->global_value = 0;
-	opencc_globals->global_string = NULL;
+	opencc_globals->default_config = NULL;
 }
-*/
-/* }}} */
 
 /* Module Initialize */
 PHP_MINIT_FUNCTION(opencc)
 {
-	/* If you have INI entries, uncomment these lines 
 	REGISTER_INI_ENTRIES();
-	*/
 	return SUCCESS;
 }
 
 /* Module Shotdown */
 PHP_MSHUTDOWN_FUNCTION(opencc)
 {
-	/* uncomment this line if you have INI entries
 	UNREGISTER_INI_ENTRIES();
-	*/
 	return SUCCESS;
 }
 
@@ -106,9 +94,7 @@ PHP_MINFO_FUNCTION(opencc)
 	php_info_print_table_header(2, "opencc support", "enabled");
 	php_info_print_table_end();
 
-	/* Remove comments if you have entries in php.ini
 	DISPLAY_INI_ENTRIES();
-	*/
 }
 
 void * load_symbol(void * dl_handle, const char * symbol)
@@ -150,14 +136,23 @@ PHP_RSHUTDOWN_FUNCTION(opencc)
 
 PHP_FUNCTION(opencc_open)
 {
+	opencc_t od;
 	char * config;
 	int config_len;
 	
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &config, &config_len) == FAILURE) {
-		RETURN_BOOL(0);
+	if (ZEND_NUM_ARGS() == 0)
+	{
+		config = OPENCC_G(default_config);
 	}
-	opencc_t od = OPENCC_G(opencc_sym).opencc_open(config);
+	else
+	{
+		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &config, &config_len) == FAILURE)
+		{
+			RETURN_BOOL(0);
+		}
+	}
 	
+	od = OPENCC_G(opencc_sym).opencc_open(config);
 	if (od == (opencc_t) -1)
 	{
 		RETURN_BOOL(0);
@@ -182,9 +177,14 @@ PHP_FUNCTION(opencc_close)
 		RETURN_BOOL(0);
 	}
 	
-	int retval = OPENCC_G(opencc_sym).opencc_close(od);
-	
-	RETURN_LONG(retval);
+	if (OPENCC_G(opencc_sym).opencc_close(od) == -1)
+	{
+		RETURN_BOOL(0);
+	}
+	else
+	{
+		RETURN_BOOL(1);
+	}
 }
 
 PHP_FUNCTION(opencc_convert)

@@ -49,6 +49,7 @@ PHP_FUNCTION(opencc_close);
 PHP_FUNCTION(opencc_convert);
 
 ZEND_BEGIN_MODULE_GLOBALS(opencc)
+	char * default_config;
 	void * dl_handle;
 	struct
 	{
