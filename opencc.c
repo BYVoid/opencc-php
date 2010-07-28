@@ -137,14 +137,10 @@ PHP_RSHUTDOWN_FUNCTION(opencc)
 PHP_FUNCTION(opencc_open)
 {
 	opencc_t od;
-	char * config;
+	char * config = NULL;
 	int config_len;
 	
-	if (ZEND_NUM_ARGS() == 0)
-	{
-		config = OPENCC_G(default_config);
-	}
-	else
+	if (ZEND_NUM_ARGS() > 0)
 	{
 		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &config, &config_len) == FAILURE)
 		{
@@ -152,6 +148,11 @@ PHP_FUNCTION(opencc_open)
 		}
 	}
 	
+	if (config == NULL || *config == 0)
+	{
+		config = OPENCC_G(default_config);
+	}
+
 	od = OPENCC_G(opencc_sym).opencc_open(config);
 	if (od == (opencc_t) -1)
 	{
