@@ -50,16 +50,6 @@ PHP_FUNCTION(opencc_convert);
 
 ZEND_BEGIN_MODULE_GLOBALS(opencc)
 	char * default_config;
-	void * dl_handle;
-	struct
-	{
-		opencc_t (*opencc_open) (const char * config_file);
-		int (*opencc_close) (opencc_t);
-		char * (*opencc_convert_utf8) (opencc_t, const char *, size_t);
-		int (*opencc_dict_load) (opencc_t, const char *, opencc_dictionary_type);
-		opencc_error (*opencc_errno) (void);
-		void (*opencc_perror) (const char * spec);
-	} opencc_sym;
 ZEND_END_MODULE_GLOBALS(opencc)
 
 /* In every utility function you add that needs to use variables 

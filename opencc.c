@@ -27,8 +27,6 @@
 #include "ext/standard/info.h"
 #include "php_opencc.h"
 
-#define LIBOPENCC "libopencc.so"
-
 ZEND_DECLARE_MODULE_GLOBALS(opencc)
 
 /* True global resources - no need for thread safety here */
@@ -97,40 +95,15 @@ PHP_MINFO_FUNCTION(opencc)
 	DISPLAY_INI_ENTRIES();
 }
 
-void * load_symbol(void * dl_handle, const char * symbol)
-{
-	void * ret = dlsym(dl_handle, symbol);
-	if (!ret)
-	{
-		fprintf(stderr, "DLERROR: %s\n", dlerror());
-		exit(1);
-	}
-}
-
 /* Initialize */
 PHP_RINIT_FUNCTION(opencc)
 {
-	OPENCC_G(dl_handle) = dlopen(LIBOPENCC, RTLD_NOW);
-	if (!OPENCC_G(dl_handle))
-	{
-		fprintf(stderr, "DLERROR: %s\n", dlerror());
-		exit(1);
-	}
-	
-	OPENCC_G(opencc_sym).opencc_open = load_symbol(OPENCC_G(dl_handle), "opencc_open");
-	OPENCC_G(opencc_sym).opencc_close = load_symbol(OPENCC_G(dl_handle), "opencc_close");
-	OPENCC_G(opencc_sym).opencc_convert_utf8 = load_symbol(OPENCC_G(dl_handle), "opencc_convert_utf8");
-	OPENCC_G(opencc_sym).opencc_dict_load = load_symbol(OPENCC_G(dl_handle), "opencc_dict_load");
-	OPENCC_G(opencc_sym).opencc_errno = load_symbol(OPENCC_G(dl_handle), "opencc_errno");
-	OPENCC_G(opencc_sym).opencc_perror = load_symbol(OPENCC_G(dl_handle), "opencc_perror");
-	
 	return SUCCESS;
 }
 
 /* Module Shutdown */
 PHP_RSHUTDOWN_FUNCTION(opencc)
 {
-	dlclose(OPENCC_G(dl_handle));
 	return SUCCESS;
 }
 
@@ -153,7 +126,7 @@ PHP_FUNCTION(opencc_open)
 		config = OPENCC_G(default_config);
 	}
 
-	od = OPENCC_G(opencc_sym).opencc_open(config);
+	od = opencc_open(config);
 	if (od == (opencc_t) -1)
 	{
 		RETURN_BOOL(0);
@@ -178,7 +151,7 @@ PHP_FUNCTION(opencc_close)
 		RETURN_BOOL(0);
 	}
 	
-	if (OPENCC_G(opencc_sym).opencc_close(od) == -1)
+	if (opencc_close(od) == -1)
 	{
 		RETURN_BOOL(0);
 	}
@@ -206,7 +179,7 @@ PHP_FUNCTION(opencc_convert)
 		RETURN_BOOL(0);
 	}
 	
-	char * outbuf = OPENCC_G(opencc_sym).opencc_convert_utf8(od, inbuf, inbuf_len);
+	char * outbuf = opencc_convert_utf8(od, inbuf, inbuf_len);
 	int len = strlen(outbuf);
 	
 	char * rs = emalloc(sizeof(char) * (len + 1));
