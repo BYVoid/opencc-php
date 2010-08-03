@@ -179,6 +179,13 @@ PHP_FUNCTION(opencc_convert)
 		RETURN_BOOL(0);
 	}
 	
+	if (inbuf_len == 0)
+	{
+		char * rs = emalloc(sizeof(char));
+		*rs = '\0';
+		RETURN_STRINGL(rs, 0, 0);
+	}
+	
 	char * outbuf = opencc_convert_utf8(od, inbuf, inbuf_len);
 	int len = strlen(outbuf);
 	
