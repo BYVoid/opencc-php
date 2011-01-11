@@ -1,6 +1,6 @@
-#AC_DEFINE(PACKAGE_VERSION, "0.0.4")
+#AC_DEFINE(PACKAGE_VERSION, "0.2.0")
 #AC_DEFINE(PACKAGE_NAME, "opencc")
-#AC_DEFINE(PACKAGE_BUGREPORT, "byvoid.kcp@gmail.com")
+#AC_DEFINE(PACKAGE_BUGREPORT, "http://code.google.com/p/opencc/issues/entry")
 
 PHP_ARG_ENABLE(opencc, whether to enable opencc support,
 [  --enable-opencc           Enable opencc support])
