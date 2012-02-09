@@ -37,6 +37,7 @@ const zend_function_entry opencc_functions[] = {
 	PHP_FE(opencc_open,	NULL)
 	PHP_FE(opencc_close,	NULL)
 	PHP_FE(opencc_convert,	NULL)
+	PHP_FE(opencc_set_conversion_mode,	NULL)
 	{NULL, NULL, NULL}
 };
 
@@ -194,4 +195,27 @@ PHP_FUNCTION(opencc_convert)
 	free(outbuf);
 	
 	RETURN_STRINGL(rs, len, 0);
+}
+
+PHP_FUNCTION(opencc_set_conversion_mode)
+{
+	zval * zod;
+	opencc_t od;
+	long conversion_mode;
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rl", &zod, &conversion_mode) == FAILURE)
+	{
+		RETURN_BOOL(0);
+	}
+
+	od = (opencc_t) zod->value.lval;
+
+	if (od == (opencc_t) -1 || od == NULL)
+	{
+		RETURN_BOOL(0);
+	}
+
+	opencc_set_conversion_mode(od, conversion_mode);
+
+	RETURN_BOOL(1);
 }

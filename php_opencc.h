@@ -47,6 +47,8 @@ PHP_MINFO_FUNCTION(opencc);
 PHP_FUNCTION(opencc_open);
 PHP_FUNCTION(opencc_close);
 PHP_FUNCTION(opencc_convert);
+PHP_FUNCTION(opencc_set_conversion_mode);
+
 
 ZEND_BEGIN_MODULE_GLOBALS(opencc)
 	char * default_config;
